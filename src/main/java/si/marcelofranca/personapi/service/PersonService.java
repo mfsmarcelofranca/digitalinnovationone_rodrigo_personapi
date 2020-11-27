@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import si.marcelofranca.personapi.dto.MessageResponseDTO;
 import si.marcelofranca.personapi.dto.request.PersonDTO;
 import si.marcelofranca.personapi.entity.Person;
+import si.marcelofranca.personapi.exception.PersonNotFoundException;
 import si.marcelofranca.personapi.mapper.PersonMapper;
 import si.marcelofranca.personapi.repository.PersonRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,5 +42,12 @@ public class PersonService {
         return allPeople.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+
+        return personMapper.toDTO(person);
     }
 }
